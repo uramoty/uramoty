@@ -1,0 +1,109 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>PhoneGap Showcase</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="css/jquery.mobile-1.2.0.min.css" type="text/css" media="all">
+		<link rel="stylesheet" href="css/jquery.mobile.structure-1.2.0.min.css" type="text/css" media="all">
+	</head>
+	<body>
+		<div data-role="page">
+			<div data-role="header">
+			     <h1>Camera Showcase</h1>
+			</div>
+			<div data-role="content">
+				<a id="camera_base64" href="#" data-role="button">Camera(Base64)</a>
+				<a id="camera_uri" href="#" data-role="button">Camera(URI)</a>
+				<a id="camera_library" href="#" data-role="button">Photo Library</a>
+				<img style="display:none;width:100%" id="camera_pic" src="" />
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript" charset="utf-8" src="js/jquery-1.7.1.min.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/jquery.mobile-1.2.0.min.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/cordova-2.1.0.js"></script>
+	<script type="text/javascript">
+	$(function(){
+	     document.addEventListener("deviceready",
+	          function(){
+	              $('#camera_base64').attr('href', 'javascript:getCameraBase64()');
+	              $('#camera_uri').attr('href', 'javascript:getCameraURI()');
+	              $('#camera_library').attr('href', 'javascript:getPhotoURI()');
+	         },
+	         false);
+	})
+	function getMovieBase64(){
+		var options = {limit: 5};
+		navigator.device.capture.captureVideo(
+			function(mediaFile) {
+				for (var i = 0; i < mediaFile.length; i++) {
+					console.log(mediaFile[i].fullPath);
+					// サーバに送信するなどアプリに応じた処理
+				}
+			},
+			function(err) {
+				console.log(err);
+			},
+			options
+		);
+	}
+	// カメラから画像を取得して、Base64形式で取得する
+	function getCameraBase64(){
+		navigator.camera.getPicture(
+			function(imageData){
+			     // cameraSuccess
+			     $('#camera_pic')
+			         .css('display', 'block')
+			         .attr('src', 'data:image/jpeg;base64,' + imageData);
+			},
+			function(message){
+			     // cameraError
+			     alert(message);
+			},
+			{
+			     quality : 75,
+			     destinationType : Camera.DestinationType.DATA_URL,
+			     sourceType : Camera.PictureSourceType.CAMERA,
+			}
+		);
+	};
+	// カメラから画像を取得して、保存された画像のURIを取得する
+	function getCameraURI(){
+	    navigator.camera.getPicture(
+	        function(imageURI){
+	            // cameraSuccess
+	            $('#camera_pic')
+	                 .css('display', 'block')
+	                 .attr('src', imageURI);
+	        },
+	        function(message){
+	            // cameraError
+	            alert(message);
+	        },
+	        {
+	            quality : 75,
+	            destinationType : Camera.DestinationType.FILE_URI,
+	            sourceType : Camera.PictureSourceType.CAMERA,
+	        });
+	};
+	// ギャラリーなどから選択した画像のURIを取得する
+	function getPhotoURI(){
+	    navigator.camera.getPicture(
+	        function(imageURI){
+	            // cameraSuccess
+	            $('#camera_pic')
+	                 .css('display', 'block')
+	                 .attr('src', imageURI);
+	        },
+	        function(message){
+	            // cameraError
+	            alert(message);
+	        },
+	        {
+	            quality : 75,
+	            destinationType : Camera.DestinationType.FILE_URI,
+	            sourceType : Camera.PictureSourceType.PHOTOLIBRARY,
+	        });
+	};
+	</script>
+</html>
